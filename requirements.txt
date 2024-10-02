@@ -1,0 +1,1 @@
+ninja-bear-language-javascript>=1.0.0

@@ -13,7 +13,7 @@ class Config(LanguageConfigBase):
         return 'ts'
 
     def _generator_type(self) -> Type[Generator]:
-        return Generator  # TODO: Probably needs to be changed by the implementer.
+        return Generator
 
     def _allowed_file_name_pattern(self) -> str:
-        return r'.+'  # TODO: Probably needs to be changed by the implementer.
+        return r'^(\.|\w)(\.|\w|-)+$'
