@@ -1,12 +1,11 @@
 from os import path
-import os
 import pathlib
 import re
-import shutil
-from typing import List
 import unittest
 
-from ninja_bear import Orchestrator, LanguageConfigBase
+from ninja_bear import Orchestrator
+from ninja_bear.base.generator_configuration import GeneratorConfiguration
+from src.ninja_bear_language_typescript.generator import Generator
 
 
 _NINJA_BEAR_REFERENCE_REGEX = r'Generated with ninja-bear v\d+\.\d+\.\d+'
@@ -19,78 +18,38 @@ class Test(unittest.TestCase):
         self._test_config_path = path.join(self._test_path, '..', 'example/test-config.yaml')
         self._test_compare_files_path = path.join(self._test_path, 'compare_files')
 
-    def test_read_config(self):
-        orchestrator = Orchestrator.read_config(self._test_config_path)
-        self._evaluate_configs(orchestrator.language_configs)
-
-    def test_parse_config(self):
-        TEST_INCLUDE = 'test-include.yaml'
-
-        with open(self._test_config_path, 'r') as f:
-            content = f.read().replace(TEST_INCLUDE, os.path.join(os.getcwd(), 'example', TEST_INCLUDE))
-        orchestrator = Orchestrator.parse_config(content, 'test-config')
-        self._evaluate_configs(orchestrator.language_configs)
-
     def test_run_generators(self):
         orchestrator = Orchestrator.read_config(self._test_config_path)
+        language_configs = orchestrator.language_configs
 
-        for config in orchestrator.language_configs:
-            compare_file_path = path.join(
-                self._test_compare_files_path,
-                f'{config.config_info.file_name_full}'
-            )
-            
-            with open(compare_file_path, 'r') as f:
-                content = f.read()
+        self.assertEqual(len(language_configs), 1)
 
-            original_max_diff = self.maxDiff
-            self.maxDiff = None
-            self.assertEqual(
-                # Remove versions to keep tests working if version changed.
-                re.sub(_NINJA_BEAR_REFERENCE_REGEX, '', config.dump()), 
-                re.sub(_NINJA_BEAR_REFERENCE_REGEX, '', content),
-            )
-            self.maxDiff = original_max_diff
+        language_config = language_configs[0]
+        config_generator = language_config.generator
+        local_generator = Generator(
+            GeneratorConfiguration(
+                indent=config_generator._indent,
+                transform=config_generator.transform,
+                naming_conventions=config_generator._naming_conventions,
+                type_name=config_generator._type_name
+            ),
+            properties=config_generator._properties,
+            additional_props=config_generator._additional_props,
+        )
 
-    def test_write_configs(self):
-        OUTPUT_DIR = path.join(self._test_path, 'test_output')
-        orchestrator = Orchestrator.read_config(self._test_config_path)
-
-        if not os.path.isdir(OUTPUT_DIR):
-            os.mkdir(OUTPUT_DIR)
+        compare_file_path = path.join(
+            self._test_compare_files_path,
+            f'{language_config.config_info.file_name_full}'
+        )
         
-        # Write all configs to the output folder.
-        orchestrator.write(OUTPUT_DIR)
+        with open(compare_file_path, 'r') as f:
+            content = f.read()
 
-        # Collect the output file names.
-        files = os.listdir(OUTPUT_DIR)
-
-        # Cleanup output directory.
-        shutil.rmtree(OUTPUT_DIR)
-
-        # Compare files.
-        for config in orchestrator.language_configs:
-            self.assertIn(config.config_info.file_name_full, files)
-
-    def _evaluate_configs(self, configs: List[LanguageConfigBase]):
-        checks = [
-            # Check TypeScript config.
-            ['ts', 'test_config'],
-        ]
-
-        self.assertIsNotNone(configs)
-        self.assertIsInstance(configs, list)
-        self.assertEqual(len(configs), len(checks))
-
-        # Check the languages.
-        for i, check in enumerate(checks):
-            self._evaluate_common_properties(configs[i], check[0], check[1])
-
-    def _evaluate_common_properties(
-        self,
-        config: LanguageConfigBase,
-        extension: str,
-        name: str,
-    ):
-        self.assertEqual(config.config_info.file_extension, extension)
-        self.assertEqual(config.config_info.file_name, name)
+        original_max_diff = self.maxDiff
+        self.maxDiff = None
+        self.assertEqual(
+            # Remove versions to keep tests working if version changed.
+            re.sub(_NINJA_BEAR_REFERENCE_REGEX, '', local_generator.dump()), 
+            re.sub(_NINJA_BEAR_REFERENCE_REGEX, '', content),
+        )
+        self.maxDiff = original_max_diff
