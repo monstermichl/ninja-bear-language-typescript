@@ -19,4 +19,4 @@ class Config(LanguageConfigBase):
         return NamingConventionType.KEBAP_CASE
 
     def _allowed_file_name_pattern(self) -> str:
-        return r'^(\.|\w)(\.|\w|-)+$'
+        return r'.+'
