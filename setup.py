@@ -17,7 +17,7 @@ setup(
         packages=find_packages(where='src'),
         py_modules=['ninja_bear_language_typescript'],
         entry_points = {
-            'ninja-bear-language-typescript': ['config=ninja_bear_language_typescript.config:Config']
+            'ninja_bear_language_typescript': ['config=ninja_bear_language_typescript.config:Config']
         },
         install_requires=[
             'ninja-bear-language-javascript>=0.1.0',
