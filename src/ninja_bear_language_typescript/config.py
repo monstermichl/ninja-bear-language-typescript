@@ -1,7 +1,7 @@
 from typing import Type
 
 from .generator import Generator
-from ninja_bear import LanguageConfigBase
+from ninja_bear import LanguageConfigBase, NamingConventionType
 
 
 class Config(LanguageConfigBase):
@@ -14,6 +14,9 @@ class Config(LanguageConfigBase):
 
     def _generator_type(self) -> Type[Generator]:
         return Generator
+    
+    def _default_file_naming_convention(self) -> NamingConventionType:
+        return NamingConventionType.KEBAP_CASE
 
     def _allowed_file_name_pattern(self) -> str:
         return r'^(\.|\w)(\.|\w|-)+$'
