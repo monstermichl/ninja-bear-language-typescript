@@ -1,14 +1,10 @@
 from os import path
 import pathlib
-import re
 import unittest
 
 from ninja_bear import Orchestrator
 from ninja_bear.base.generator_configuration import GeneratorConfiguration
 from src.ninja_bear_language_typescript.generator import Generator
-
-
-_NINJA_BEAR_REFERENCE_REGEX = r'Generated with ninja-bear v\d+\.\d+\.\d+'
 
 
 class Test(unittest.TestCase):
@@ -47,9 +43,5 @@ class Test(unittest.TestCase):
 
         original_max_diff = self.maxDiff
         self.maxDiff = None
-        self.assertEqual(
-            # Remove versions to keep tests working if version changed.
-            re.sub(_NINJA_BEAR_REFERENCE_REGEX, '', local_generator.dump()), 
-            re.sub(_NINJA_BEAR_REFERENCE_REGEX, '', content),
-        )
+        self.assertEqual(local_generator.dump(), content)
         self.maxDiff = original_max_diff
