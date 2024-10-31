@@ -8,7 +8,7 @@ LONG_DESCRIPTION = Path(__file__).parent.absolute().joinpath('README.md').read_t
 
 setup(
         name='ninja-bear-language-typescript', 
-        version='0.1.0',
+        version='0.1.1',
         author='monstermichl',
         description=DESCRIPTION,
         long_description=LONG_DESCRIPTION,
@@ -20,11 +20,11 @@ setup(
             'ninja_bear_language_typescript': ['config=ninja_bear_language_typescript.config:Config']
         },
         install_requires=[
-            'ninja-bear-language-javascript>=0.1.0',
+            'ninja-bear-language-javascript>=0.1.1',
         ],
         extras_require={
             'dev': [
-                'ninja-bear>=0.1.0',
+                'ninja-bear>=0.1.1',
                 'wheel>=0.41.1',
                 'twine>=4.0.2',
                 'ruff>=0.0.47',
