@@ -27,7 +27,7 @@ class Test(unittest.TestCase):
         self._test_path = pathlib.Path(__file__).parent.resolve()
         self._test_config_path = path.join(self._test_path, '..', 'example/test-config.yaml')
         self._plugins = [
-            Plugin('config', Generator)
+            Plugin('ninja-bear-language-typescript', Generator)
         ]
 
     def test_run_generators(self):
