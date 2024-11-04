@@ -1,6 +1,7 @@
 # ninja-bear-language-typescript
 This [ninja-bear](https://pypi.org/project/ninja-bear) plugin adds support for the TypeScript programming language.
 
+## Example configuration
 ```yaml
 languages:
   # -------------------------------------------------------------------------
@@ -59,4 +60,17 @@ properties:
   - type: string
     name: mySubstitutedString
     value: Sometimes I just want to scream ${myString}!  # To use the value of another property, simply use its name with ${}. E.g., ${myString}.
+```
+
+## Example output
+```typescript
+export const TestConfig = {
+    MyBoolean: true,
+    MyInteger: 142,
+    MyFloat: 322.0,
+    MyCombinedFloat: 45724.0,
+    MyDouble: 233.9,
+    MyRegex: /Test Reg(E|e)x/, // Just another RegEx.
+    MySubstitutedString: 'Sometimes I just want to scream Hello World!',
+} as const;
 ```
